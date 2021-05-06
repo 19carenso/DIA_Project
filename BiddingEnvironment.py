@@ -10,7 +10,7 @@ import numpy as np
 
 
 def fun(x) : 
-     return 100 - (1.0 - np.exp(-4*x +3*x**3))
+     return 100 * (1.0 - np.exp(-4*x +3*x**3))
      
 class BiddingEnvironment():
     def __init__(self, bids, sigma):
