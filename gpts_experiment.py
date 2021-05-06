@@ -20,7 +20,7 @@ bids = np.linspace(min_bid, max_bid, n_arms)
 sigma = 10
 
 T = 60
-n_experiments = 100
+n_experiments = 10
 
 gts_rewards_per_experiment = []
 gpts_rewards_per_experiment = []
