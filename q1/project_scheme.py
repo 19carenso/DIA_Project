@@ -63,6 +63,7 @@ print(f"Ci-dessous la matrice de taux de conversion avec par ligne les classes e
 
 print(f"conversion rate with no promo \n{alpha*f2_linear(p2)} with classes per line and promo per colon") 
 
-def objective_function(p, p2_initial, alpha):
-   # return np.dot(f1_linear(p1), n_cients_per_class)*
-    return 0
+def objective_function(p1, p2_initial, alpha):
+
+   return np.dot(f1_linear(p1), n_cients_per_class)*m1(p1)
+
