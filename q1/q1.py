@@ -35,7 +35,7 @@ def conversion1(p1):
 def conversion2(p2):
     #TODO : assez moche comme définition lol, voir comment rendre ça plus propre
     '''
-    Renvoie le taux de conversion pour l'item 2 de chaque classe C_i pour une liste prix proposé p2.
+    Renvoie le taux de conversion pour l'item 2 de chaque classe C_i pour une liste de prix proposé p2.
     On suppose un modèle linéaire.
 
     Parameters
@@ -70,11 +70,11 @@ def objective_function(p1, p2_initial, alpha, n_clients_per_class):
         liste indiquant pour chaque classe, le nombre de clients journaliers
     '''
             
-    n_clients_1_per_class = np.round(conversion1(p1) * n_clients_per_class) # nombre de clients ayant acheté l'item 1 par classe aujourd'hui
+    n_clients_1_per_class = conversion1(p1) * n_clients_per_class # nombre de clients ayant acheté l'item 1 par classe aujourd'hui
 
-    n_clients_1 = np.sum(np.round(n_clients_1_per_class)) # nombre de clients ayant acheté l'item 1 aujourd'hui 
+    n_clients_1 = np.sum(n_clients_1_per_class) # nombre de clients ayant acheté l'item 1 aujourd'hui 
 
-    P = np.array([0, 0.10, 0.25, 0.40]) # Nos promotions, constantes. 
+    P = np.array([0, 0.10, 0.20, 0.30]) # Nos promotions, constantes. 
 
     promotions = (1-P) * p2_initial # prix proposé en fonction de la réduction. attention c'est donc un vecteur.
 
@@ -185,4 +185,4 @@ def test3():
 
     print(res)
 
-test1()
+test2()
