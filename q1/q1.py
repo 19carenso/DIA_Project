@@ -19,7 +19,7 @@ def margin1(p1):
 def margin2(p2):
     '''
     Renvoie la marge gagnée si l'item 2 est vendu au prix p2.
-    On suppose que chaque item 2 est produit avec un coût constant d1.
+    On suppose que chaque item 2 est produit avec un coût constant d2.
     '''
     d2 = 30
     return p2 - d2
@@ -78,7 +78,24 @@ def objective_function(p1, p2_initial, alpha, n_clients_per_class):
 
     promotions = (1-P) * p2_initial # prix proposé en fonction de la réduction. attention c'est donc un vecteur.
 
-    return n_clients_1*margin1(p1) + np.dot(n_clients_1_per_class, np.dot(alpha*conversion2(promotions),margin2(promotions)))
+    return n_clients_1*margin1(p1) + np.dot(n_clients_1_per_class, np.dot(alpha*conversion2(promotions), margin2(promotions)))
+
+
+
+def optimal_solution(mu, pmax1, pmax2, d1, alpha, promotions):
+    '''
+    Renvoie la valeur optimal p* qui maximise la fonction objective_function, étant donné les alpha et les promotions
+    '''
+
+    d_star = np.dot( [-mu[i]/pmax2[i] for i in range(4)], np.dot(alpha*conversion2(promotions), [margin2(promotions[i]) for i in range(4)]))
+
+    somme_mu = np.sum(mu)
+    somme_denom = np.sum([mu[i]/pmax1[i] for i in range(4)])
+    print(d_star, somme_mu, somme_denom)
+
+    p_star = (d_star + d1*somme_denom + somme_mu) / (2*somme_denom)
+
+    return p_star
 
 
 ###########################
@@ -185,4 +202,15 @@ def test3():
 
     print(res)
 
-test2()
+
+def test4():
+    alpha = [[0.25, 0.25, 0.25, 0.25],
+             [0.25, 0.25, 0.25, 0.25],
+             [0.25, 0.25, 0.25, 0.25],
+             [0.25, 0.25, 0.25, 0.25]]
+    alpha2 = [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]
+    res = optimal_solution([50, 20, 10, 5], [60, 70, 80, 100], [100, 125, 200, 250], 20, alpha2, [50, 45, 40, 35])
+    print(res)
+
+
+test4()
