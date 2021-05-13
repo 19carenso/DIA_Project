@@ -18,8 +18,8 @@ def margin1(p1):
 
 def margin2(p2):
     '''
-    Renvoie la marge gagnée si l'item 1 est vendu au prix p2.
-    On suppose que chaque item 1 est produit avec un coût constant d1.
+    Renvoie la marge gagnée si l'item 2 est vendu au prix p2.
+    On suppose que chaque item 2 est produit avec un coût constant d1.
     '''
     d2 = 30
     return p2 - d2
