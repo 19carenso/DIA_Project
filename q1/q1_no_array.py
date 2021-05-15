@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon May 10 22:39:22 2021
+Created on Thu May 13 21:33:08 2021
 
 @author: maxime
 """
+
 import autograd.numpy as np
 import matplotlib.pyplot as plt
 from numpy.core.function_base import linspace
@@ -22,20 +23,32 @@ def margin2(p2):
     On suppose que chaque item 2 est produit avec un coût constant d1.
     '''
     d2 = 30
-    return p2 - d2
+    for i,x in enumerate(p2):
+        p2[i] -= d2
+    return p2
 
 def conversion1(p1):
     '''
     Renvoie le taux de conversion pour l'item 1 de chaque classe C_i pour un prix proposé p1.
     On suppose un modèle linéaire.
     '''
-    p_max_per_class = np.array([60, 70, 80, 100])
-    return np.array([1 - p1/p_max if 1 - p1/p_max >= 0 else 0 for p_max in p_max_per_class])
+    p_max_per_class = [60, 70, 80, 100]
+    f1 = [0]*len(p_max_per_class)
+    
+    for i,p_max in enumerate(p_max_per_class):        
+        if 1 - p1/p_max >= 0 :             
+            f1[i] = 1 - p1/p_max 
+        else:
+            f1[i] = 0         
+    return f1
 
 def conversion2(p2):
     #TODO : assez moche comme définition lol, voir comment rendre ça plus propre
     '''
     Renvoie le taux de conversion pour l'item 2 de chaque classe C_i pour une liste de prix proposé p2.
+    L'output est une liste de taille 16 où les 4 premières entrées correspondent aux taux de conversion 
+    de la classe 1, les 4 suivantes de la classe 2, etc..
+    
     On suppose un modèle linéaire.
 
     Parameters
@@ -44,10 +57,10 @@ def conversion2(p2):
         p2 est typiquement égal à [P0, P1, P2, P3] où les Pi sont les prix réduits
     '''
     p2_initial = p2[0]
-    p_max_per_class = np.array([2*p2_initial, 2.5*p2_initial, 4*p2_initial, 5*p2_initial])
-    f2 = np.zeros((4,4))
+    p_max_per_class = [2*p2_initial, 2.5*p2_initial, 4*p2_initial, 5*p2_initial]
+    f2 = [0] * 16
     for j,p in enumerate(p2):
-        f2[:,j] = np.array([1 - p/p_max if 1 - p/p_max >= 0 else 0 for p_max in p_max_per_class])
+        f2[4*j:4*(j+1)] = [1 - p/p_max if 1 - p/p_max >= 0 else 0 for p_max in p_max_per_class]
     return f2
 
 def objective_function(p1, p2_initial, alpha, n_clients_per_class):
@@ -64,21 +77,34 @@ def objective_function(p1, p2_initial, alpha, n_clients_per_class):
     
     alpha : list
         tableau dont les cases représentent l'attribution de chaque promotion Pj pour les clients de la classe Ci
-        la somme de lignes est donc égalle a 1
+        avec les 4 premières cases correspondant à la 1ère classe , les 4 suivantes à la seconde etc.
 
     n_clients_per_class : list
         liste indiquant pour chaque classe, le nombre de clients journaliers
     '''
-            
-    n_clients_1_per_class = conversion1(p1) * n_clients_per_class # nombre de clients ayant acheté l'item 1 par classe aujourd'hui
+    f1 = conversion1(p1)
+    
+    n_clients_1_per_class = [0] * len(f1)
+    
+    for i,f in enumerate(f1):
+        n_clients_1_per_class[i] = f1[i] * n_clients_per_class[i] # nombre de clients ayant acheté l'item 1 par classe aujourd'hui
 
     n_clients_1 = np.sum(n_clients_1_per_class) # nombre de clients ayant acheté l'item 1 aujourd'hui 
 
-    P = np.array([0, 0.10, 0.20, 0.30]) # Nos promotions, constantes. 
+    P = [0, 0.10, 0.20, 0.30] # Nos promotions, constantes. 
 
-    promotions = (1-P) * p2_initial # prix proposé en fonction de la réduction. attention c'est donc un vecteur.
-
-    return n_clients_1*margin1(p1) + np.dot(n_clients_1_per_class, np.dot(alpha*conversion2(promotions),margin2(promotions)))
+    promotions = [(1-p) * p2_initial for p in P] # prix proposé en fonction de la réduction. attention c'est donc une liste
+    
+    f2 = conversion2(promotions)
+    
+    benefice2 = 0
+    
+    for i,m in enumerate(margin2(promotions)):
+        for j in range(4):
+            benefice2 += alpha[4*j+i]*f2[4*j+i] * m * n_clients_1_per_class[i] # je crois que c'est correct, à vérifier.
+            
+    return n_clients_1 * margin1(p1) + benefice2
+    # return n_clients_1*margin1(p1) + np.dot(n_clients_1_per_class, np.dot(alpha*conversion2(promotions),margin2(promotions)))
 
 
 ###########################
@@ -184,4 +210,3 @@ def test3():
     res = objective_function(p1, p2_initial, alpha, n_clients_per_class)
 
     print(res)
-
