@@ -56,11 +56,12 @@ def conversion2(p2):
     p2 : list
         p2 est typiquement égal à [P0, P1, P2, P3] où les Pi sont les prix réduits
     '''
-    p2_initial = p2[0]
-    p_max_per_class = [2*p2_initial, 2.5*p2_initial, 4*p2_initial, 5*p2_initial]
+    
+    p_max_per_class = [150, 200, 350, 500] # les utilisateurs sont près à payer bcp plus pour ce bien 
     f2 = [0] * 16
-    for j,p in enumerate(p2):
-        f2[4*j:4*(j+1)] = [1 - p/p_max if 1 - p/p_max >= 0 else 0 for p_max in p_max_per_class]
+    
+    for j,p_max in enumerate(p_max_per_class):
+        f2[4*j:4*(j+1)] = [1 - p/p_max if 1 - p/p_max >= 0 else 0 for p in p2]
     return f2
 
 def objective_function(p1, p2_initial, alpha, n_clients_per_class):
@@ -82,6 +83,8 @@ def objective_function(p1, p2_initial, alpha, n_clients_per_class):
     n_clients_per_class : list
         liste indiquant pour chaque classe, le nombre de clients journaliers
     '''
+    
+    
     f1 = conversion1(p1)
     
     n_clients_1_per_class = [0] * len(f1)
@@ -95,13 +98,14 @@ def objective_function(p1, p2_initial, alpha, n_clients_per_class):
 
     promotions = [(1-p) * p2_initial for p in P] # prix proposé en fonction de la réduction. attention c'est donc une liste
     
-    f2 = conversion2(promotions)
+    f2 = conversion2(promotions) #on s'en sert donc à chaque fois pour calculer les taux de conversion
+                                            # autrement on pourrait choisit des constantes arbitraires comme pour conversion1
     
     benefice2 = 0
     
-    for i,m in enumerate(margin2(promotions)):
-        for j in range(4):
-            benefice2 += alpha[4*j+i]*f2[4*j+i] * m * n_clients_1_per_class[i] # je crois que c'est correct, à vérifier.
+    for j,m in enumerate(margin2(promotions)): #on parcourt sur les promotions et on récupère la marge m sur la ième promo tant qu'on y est 
+        for i in range(4): #on parcourt sur les classes
+            benefice2 += alpha[4*i+j]*f2[4*i+j] * m * n_clients_1_per_class[i] # je crois que c'est correct, à vérifier.
             
     return n_clients_1 * margin1(p1) + benefice2
     # return n_clients_1*margin1(p1) + np.dot(n_clients_1_per_class, np.dot(alpha*conversion2(promotions),margin2(promotions)))

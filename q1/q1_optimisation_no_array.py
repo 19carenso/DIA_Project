@@ -8,7 +8,7 @@ Created on Sat May 15 09:06:20 2021
 import autograd.numpy as np
 import matplotlib.pyplot as plt
 import scipy.optimize as so
-from autograd import grad, jacobian, hessian
+from autograd import grad, hessian
 from q1_no_array import objective_function, margin1, margin2, conversion1, conversion2, test1
 
 def x_constr(p1, p2_initial, alpha):
@@ -26,7 +26,7 @@ def x_deconstr(x):
 
 def obj_fun(x, n_clients_per_class): 
     p1, p2_initial, alpha = x_deconstr(x) 
-    return  - objective_function(p1, p2_initial, alpha, n_clients_per_class) 
+    return  - objective_function(p1, p2_initial, alpha, n_clients_per_class) #on compte les sous en millions içi
     
 bnds = ((0, None), # p1 prize of first item positive
         (0, None), # p2 should be over d2 but the variable can't be accessed as margin 2 is defined so for now we'll keep it positive
@@ -65,14 +65,14 @@ cons_eq = so.LinearConstraint(Constraint_Array_eq, lb_constraint_eq, ub_constrai
 cons_ineq = so.LinearConstraint(Constraint_Array_ineq, lb_constraint_ineq, ub_constraint_ineq)
 
 x0 = x_constr(100, 100,     
-              alpha = [0.5, 0.5, 0., 0.,
-                       0.5, 0.5, 0., 0.,
-                       0.5, 0.5, 0., 0.,
-                       0.5, 0.5, 0., 0.])
+              alpha = [1, 0, 0., 0.,
+                       1., 0., 0., 0.,
+                       1., 0., 0., 0.,
+                       1, 0., 0., 0.])
     
 n_clients_per_class = np.array([50, 20, 10, 5])
 
 gradient_obj_fun = grad(obj_fun)
 hessian_obj_fun = hessian(obj_fun)
 
-res = so.minimize(obj_fun, x0 = x0, args = n_clients_per_class, jac = gradient_obj_fun, hess = hessian_obj_fun, bounds = bnds, constraints = [cons_eq, cons_ineq])
+res = so.minimize(obj_fun, x0 = x0, args = n_clients_per_class, jac = gradient_obj_fun, bounds = bnds, constraints = [cons_eq, cons_ineq])
