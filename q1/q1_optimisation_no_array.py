@@ -76,3 +76,7 @@ gradient_obj_fun = grad(obj_fun)
 hessian_obj_fun = hessian(obj_fun)
 
 res = so.minimize(obj_fun, x0 = x0, args = n_clients_per_class, jac = gradient_obj_fun, bounds = bnds, constraints = [cons_eq, cons_ineq])
+
+x_sol = res.x
+
+print(np.round(x_sol[0]), np.round(x_sol[1]), np.argmax(x_sol[2:6]),np.argmax(x_sol[6:10]), np.argmax(x_sol[10:14]), np.argmax(x_sol[14:18]) )
