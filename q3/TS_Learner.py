@@ -21,6 +21,7 @@ class TS_Learner(Learner):
         '''
         sample = np.random.beta(self.beta_parameters[:,0], self.beta_parameters[:,1])
         value = [0]*self.n_arms
+        
         for i in range (self.n_arms):
             value[i] = objective_function(sample[i]*self.p1[i], self.p2,self.alpha,self.n_clients_per_class)
         idx = np.argmax(value)

@@ -14,10 +14,12 @@ Created on Sun May 16 18:08:13 2021
 
 import numpy as np 
 import matplotlib.pyplot as plt
+
 from Environment import Environment
 from TS_Learner import TS_Learner
+
+from q1_functions import objective_function, conversion1
 from q1_optimiser import p1_optimal
-from q1_functions import objective_function
 
 #Variables fixed
 
@@ -26,7 +28,7 @@ p2 = 40 # price before promotion
 P1 = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55] #arms
 n_clients_per_class = [50,40,25,15]
 n_arms = len(P1)
-p = np.array([1/len(P1)]*len(P1)) #proba of each arm
+p = np.mean(np.array([conversion1(p1) for p1 in P1]), axis = 1) # proba of each arm
 p1_opt = p1_optimal(p1 = np.mean(P1), p2 = p2, alpha = alpha, n_clients_per_class = n_clients_per_class)
 
 T = 365
@@ -49,20 +51,22 @@ for e in range(0, n_experiments):
         
         cv_rate_1 = env.round(pulled_arm)
         profit = objective_function(P1[pulled_arm], p2, alpha, n_clients_per_class)
-        ts_learner.update(pulled_arm, cv_rate_1, profit)        
+        ts_learner.update(pulled_arm, cv_rate_1, profit)
+
+        
     n_pulled_arms = [((np.array(memory_pulled_arm) == i).sum()) for i in range(len(P1))]
-    print(f" for the experiment number {e} the number of time each arm has been pulled are \n {n_pulled_arms} \n \n ")    
+    print(f" for the experiment number {e} the number of time each arm has been pulled are \n {n_pulled_arms} \n")
+    most_pulled_arm = np.argmax(n_pulled_arms)
+    n_pulled_arms[most_pulled_arm] = 0
+    second_most_pulled_arm = np.argmax(n_pulled_arms)
+    print(f"so the 2 most pulled arms are {P1[most_pulled_arm]} and {P1[second_most_pulled_arm]}")
+
+
     ts_rewards_per_experiment.append(ts_learner.total_profit)
     
 opt = objective_function(p1_opt, p2, alpha, n_clients_per_class)
 
 plt.figure(0)
-plt.xlabel("t")
-plt.ylabel("Expected profit")
-plt.plot(np.cumsum(np.mean(ts_rewards_per_experiment, axis = 0)), 'r')
-plt.legend(["TS"])
-
-plt.figure(1)
 plt.xlabel("t")
 plt.ylabel("Regret")
 plt.plot(np.cumsum(np.mean(opt - ts_rewards_per_experiment, axis = 0)), 'b')
