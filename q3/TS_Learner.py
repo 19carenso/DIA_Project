@@ -6,7 +6,7 @@ Created on Sun May 16 18:16:13 2021
 """
 
 from Learner import Learner
-from q1_no_array import objective_function
+from q1_functions import objective_function
 import numpy as np
 
 class TS_Learner(Learner):
