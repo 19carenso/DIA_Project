@@ -30,6 +30,7 @@ n_clients_per_class = [50,40,25,15]
 n_arms = len(P1)
 p = np.mean(np.array([conversion1(p1) for p1 in P1]), axis = 1) # proba of each arm
 p1_opt = p1_optimal(p1 = np.mean(P1), p2 = p2, alpha = alpha, n_clients_per_class = n_clients_per_class)
+p1_opt = 45
 
 T = 365
 
@@ -49,7 +50,7 @@ for e in range(0, n_experiments):
         pulled_arm = ts_learner.pull_arm()
         memory_pulled_arm.append(pulled_arm)
         
-        cv_rate_1 = env.round(pulled_arm)
+        cv_rate_1 = env.round(pulled_arm, n_clients_per_class)
         profit = objective_function(P1[pulled_arm], p2, alpha, n_clients_per_class)
         ts_learner.update(pulled_arm, cv_rate_1, profit)
 
