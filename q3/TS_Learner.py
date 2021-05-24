@@ -31,7 +31,7 @@ class TS_Learner(Learner):
         self.t += 1
         self.update_observations(pulled_arm, cv_rate_1, profit)
         #The first parameter stores how many success we have for each arm while the second parameter contains the number of loss
-        self.beta_parameters[pulled_arm, 0] = self.beta_parameters[pulled_arm, 0] + cv_rate_1
-        self.beta_parameters[pulled_arm, 1] = self.beta_parameters[pulled_arm, 1] + 1.0 - cv_rate_1
+        self.beta_parameters[pulled_arm, 0] = self.beta_parameters[pulled_arm, 0] + np.sum(cv_rate_1)
+        self.beta_parameters[pulled_arm, 1] = self.beta_parameters[pulled_arm, 1] + np.sum(1 - cv_rate_1)
         
         

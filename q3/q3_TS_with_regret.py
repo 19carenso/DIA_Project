@@ -37,7 +37,7 @@ T = 365
 n_experiments = 100
 
 ts_rewards_per_experiment = []
-
+pulled_arms_global = np.array([0]*len(P1))
 
 for e in range(0, n_experiments):
     print(f"Experiment number {e}\n")
@@ -56,6 +56,7 @@ for e in range(0, n_experiments):
 
         
     n_pulled_arms = [((np.array(memory_pulled_arm) == i).sum()) for i in range(len(P1))]
+    pulled_arms_global += np.array(n_pulled_arms)
     print(f" for the experiment number {e} the number of time each arm has been pulled are \n {n_pulled_arms} \n")
     most_pulled_arm = np.argmax(n_pulled_arms)
     n_pulled_arms[most_pulled_arm] = 0
@@ -64,6 +65,8 @@ for e in range(0, n_experiments):
 
 
     ts_rewards_per_experiment.append(ts_learner.total_profit)
+
+pulled_arms_global = 1300* pulled_arms_global / max(pulled_arms_global)
     
 opt = objective_function(p1_opt, p2, alpha, n_clients_per_class)
 
@@ -72,4 +75,13 @@ plt.xlabel("t")
 plt.ylabel("Regret")
 plt.plot(np.cumsum(np.mean(opt - ts_rewards_per_experiment, axis = 0)), 'b')
 plt.legend(["TS"])
+
+plt.figure(1)
+X = np.linspace(10, 60, 100)
+Y = [objective_function(x, p2, alpha, n_clients_per_class) for x in X]
+plt.xlabel('prize of item 1')
+plt.ylabel('profit over the day')
+plt.scatter(P1, pulled_arms_global)
+plt.plot(X, Y, 'g')
 plt.show()
+
