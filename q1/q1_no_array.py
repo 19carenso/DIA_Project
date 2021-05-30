@@ -22,10 +22,11 @@ def margin2(p2):
     Renvoie la marge gagnée si l'item 2 est vendu au prix p2.
     On suppose que chaque item 2 est produit avec un coût constant d1.
     '''
+    margin2 = [0, 0, 0, 0]
     d2 = 30
     for i,x in enumerate(p2):
-        p2[i] -= d2
-    return p2
+        margin2[i] = x - d2
+    return margin2
 
 def conversion1(p1):
     '''
