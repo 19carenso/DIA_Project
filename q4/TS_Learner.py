@@ -22,13 +22,13 @@ class TS_Learner(Learner):
         '''
         sample_1 = np.random.beta(self.beta_parameters_1[:,0], self.beta_parameters_1[:,1]) #this returns an estimation of the conversion rate of item 1
                                                                                           # depending on the pulled arm
-        #print(f"sample_1 est {sample_1}")                                                                              
+                                                                                    
         cv_2_estimation = np.random.beta(self.beta_parameters_2[:,0], self.beta_parameters_2[:,1]) # draw an estimation of cv_2                                                                                   
         value = [0]*self.n_arms
         
         for i in range(self.n_arms):   
             value[i] = learner_obj_fun(self.P1[i], sample_1[i], self.p2, cv_2_estimation, self.alpha, self.n_clients) #TODO le prob est surement la ou sur cv_rate_1
-        #print(f" les profits estimés sont {value}")
+        
         idx = np.argmax(value)
         return idx
         

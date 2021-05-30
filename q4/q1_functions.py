@@ -129,7 +129,6 @@ def learner_obj_fun(p1, c1, p2, c2, alpha, n_clients):
     profit += margin1(p1) * n_clients_1 # bénéfice du à la vente de l'item 1.
     
     Promos = [0, 0.10, 0.20, 0.30] # Nos promotions, constantes, similaires à la question précédente
-    print(f"le profit sur la vente de l'objet 1 est {profit} \n \n ")
     promotions = [p2 * (1 - P) for P in Promos] # içi le learner ne différencie pas les classe, donc une seule liste suffit
     
     for i,a in enumerate(alpha[0:4]):
@@ -137,7 +136,6 @@ def learner_obj_fun(p1, c1, p2, c2, alpha, n_clients):
         n_clients_1_i = n_clients_1 * a # nombre de clients ayant acheté l'item 1 a qui est proposé la ième promo
         margin = margin2(promotions)
         profit += margin[i]*c2[i]*n_clients_1_i #c2[i] étant l'estimation par le learner du taux de conversion de la promo i
-        print(f" le profit après la promo {i} est de {profit}")
     return profit
 
 ###########################

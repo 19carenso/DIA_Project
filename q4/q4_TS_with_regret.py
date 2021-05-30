@@ -28,13 +28,13 @@ p2_after_promo = [p2 * (1 - P) for P in [0, 0.10, 0.20, 0.30]] #price after prom
 n_clients_per_class = [50,40,25,15]
 
 #Variables fixed of the testing
-P1 = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55] #arms
+P1 = [30, 34, 38, 42, 46, 50, 54, 58] #arms
 n_arms = len(P1)
 p_1 = np.array([conversion1(p1) for p1 in P1]) # conversion rate of item 1 for each arm and for each class
 p_2 = conversion2(p2_after_promo) #attention à l'utilisation les 16taux de conversion sont tous les uns après les autres dans une même liste de 16éléments
 
 T = 365
-n_experiments = 1
+n_experiments = 100
 
 #Variables fixed of the solution
 p1_opt = p1_optimal(p1 = np.mean(P1), p2 = p2, alpha = alpha, n_clients_per_class = n_clients_per_class)
@@ -54,7 +54,6 @@ for e in range(0, n_experiments):
     for t in range(0, T):
         #TS Learner
         pulled_arm = ts_learner.pull_arm()
-        print(f"pulled arm is {pulled_arm}")
         memory_pulled_arm.append(pulled_arm)
         
         cv_rate_1, cv_rate_2 = env.round(pulled_arm, n_clients_per_class)
