@@ -10,8 +10,8 @@ from q1_functions import objective_function
 import numpy as np
 
 class TS_Learner(Learner):
-    def __init__(self, n_arms, P1, p2, alpha, n_clients_per_class):
-        super().__init__(n_arms, P1, p2, alpha, n_clients_per_class)
+    def __init__(self, n_arms, p1, p2, alpha, n_clients_per_class):
+        super().__init__(n_arms, p1, p2, alpha, n_clients_per_class)
         self.beta_parameters= np.ones((n_arms, 2)) #beta distrib is defined by 2 parameters
         
     def pull_arm(self):
@@ -22,9 +22,12 @@ class TS_Learner(Learner):
         sample = np.random.beta(self.beta_parameters[:,0], self.beta_parameters[:,1])
         value = [0]*self.n_arms
         
+        
         for i in range (self.n_arms):
-            value[i] = objective_function(sample[i]*self.p1[i], self.p2,self.alpha,self.n_clients_per_class)
+            value[i] = sample[i]*objective_function(self.p1[i], self.p2, self.alpha, self.n_clients_per_class)
+            #TODO : verify if it is correct
         idx = np.argmax(value)
+
         return idx
         
     def update(self, pulled_arm, cv_rate_1, profit):

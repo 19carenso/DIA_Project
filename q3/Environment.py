@@ -12,6 +12,6 @@ class Environment():
         self.probabilities = probabilities
         
     def round(self, pulled_arm, n_clients_per_class):
-        cv_rate_1 =  np.random.binomial(1, self.probabilities[pulled_arm], np.sum(n_clients_per_class))
+        cv_rate_1 = np.random.binomial(1, self.probabilities[pulled_arm], np.sum(n_clients_per_class))
         return np.mean(cv_rate_1)
     
