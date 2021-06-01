@@ -188,6 +188,30 @@ def learner_obj_fun(p1, c1, p2, c2, alpha, n_clients):
         profit += margin[i]*c2[i]*n_clients_1_i #c2[i] étant l'estimation par le learner du taux de conversion de la promo i
     return profit
 
+
+def experiment_obj_fun(p1, cv_rate_1, p2_after_promo, cv_rate_2):
+    profit = np.sum(cv_rate_1)*margin1(p1)
+    margin2_all = margin2(p2_after_promo)
+    for i in range(len(cv_rate_2)):
+        profit += np.sum(cv_rate_2[i])*margin2_all[i]
+    return profit
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 ###########################
 ##########       ##########
 ########   TESTS   ########

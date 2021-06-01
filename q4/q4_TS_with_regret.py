@@ -12,8 +12,9 @@ import matplotlib.pyplot as plt
 
 from Environment import Environment
 from TS_Learner import TS_Learner
+from UCB_Learner import UCB_Learner
 
-from q1_functions import objective_function, conversion1, conversion2
+from q1_functions import objective_function, conversion1, conversion2, experiment_obj_fun
 from q1_optimiser import p1_optimal
 
 #Variables fixed of the problem
@@ -43,20 +44,30 @@ pulled_arms_global = np.array([0]*len(P1))
 for e in range(0, n_experiments):
     print(f"Experiment number {e}\n")
     env = Environment(n_arms = n_arms, probabilities_1 = p_1, probabilities_2 = p_2)
+    
     ts_learner = TS_Learner(n_arms, P1, p2, alpha, n_clients_per_class)
-    memory_pulled_arm = []
+    ts_memory_pulled_arm = []
+    
+    ucb_learner = UCB_Learner(n_arms, P1, p2, alpha, n_clients_per_class)
+    ucb_memory_pulled_arm = []
     
     for t in range(0, T):
         #TS Learner
         pulled_arm = ts_learner.pull_arm()
-        memory_pulled_arm.append(pulled_arm)
-        
+        ts_memory_pulled_arm.append(pulled_arm)        
         cv_rate_1, cv_rate_2 = env.round(pulled_arm, n_clients_per_class)
-        profit = objective_function(P1[pulled_arm], p2, alpha, n_clients_per_class) # TODO : CHANGER CETTE LIGNE
+        profit = experiment_obj_fun(P1[pulled_arm], cv_rate_1, p2_after_promo, cv_rate_2)
         ts_learner.update(pulled_arm, cv_rate_1, cv_rate_2, profit)
+        
+        #uCb_LeArNeR
+        pulled_arm = ucb_learner.pull_arm()
+        ucb_memory_pulled_arm.append(pulled_arm)        
+        cv_rate_1, cv_rate_2 = env.round(pulled_arm, n_clients_per_class)
+        profit = experiment_obj_fun(P1[pulled_arm], cv_rate_1, p2_after_promo, cv_rate_2) 
+        ucb_learner.update(pulled_arm, cv_rate_1, cv_rate_2, profit)
 
         
-    n_pulled_arms = [((np.array(memory_pulled_arm) == i).sum()) for i in range(len(P1))]
+    n_pulled_arms = [((np.array(ts_memory_pulled_arm) == i).sum()) for i in range(len(P1))]
     pulled_arms_global += np.array(n_pulled_arms)
     print(f" for the experiment number {e} the number of time each arm has been pulled are \n {n_pulled_arms} \n")
     most_pulled_arm = np.argmax(n_pulled_arms)
