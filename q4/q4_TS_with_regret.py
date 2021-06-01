@@ -5,11 +5,6 @@ Created on Mon May 17 18:57:12 2021
 @author: maxime
 """
 
-"""
-Created on Sun May 16 18:08:13 2021
-
-@author: Fabien
-"""
 
 
 import numpy as np 
@@ -23,18 +18,18 @@ from q1_optimiser import p1_optimal
 
 #Variables fixed of the problem
 alpha = [0.25]*16
-p2 = 40 # price before promotion
+p2 = 200 # price before promotion
 p2_after_promo = [p2 * (1 - P) for P in [0, 0.10, 0.20, 0.30]] #price after promotions, be careful that the promos are the same than in obj_fun. 
 n_clients_per_class = [50,40,25,15]
 
 #Variables fixed of the testing
-P1 = [30, 34, 38, 42, 46, 50, 54, 58] #arms
+P1 = [20, 30, 35, 40, 45, 50] #arms
 n_arms = len(P1)
 p_1 = np.array([conversion1(p1) for p1 in P1]) # conversion rate of item 1 for each arm and for each class
 p_2 = conversion2(p2_after_promo) #attention à l'utilisation les 16taux de conversion sont tous les uns après les autres dans une même liste de 16éléments
 
 T = 365
-n_experiments = 100
+n_experiments = 50
 
 #Variables fixed of the solution
 p1_opt = p1_optimal(p1 = np.mean(P1), p2 = p2, alpha = alpha, n_clients_per_class = n_clients_per_class)
@@ -71,10 +66,12 @@ for e in range(0, n_experiments):
 
 
     ts_rewards_per_experiment.append(ts_learner.total_profit)
-
-pulled_arms_global = 1300* pulled_arms_global / max(pulled_arms_global)
     
 opt = objective_function(p1_opt, p2, alpha, n_clients_per_class)
+
+pulled_arms_global = opt* pulled_arms_global / max(pulled_arms_global) #we use the optimal value just as a scaling factor so that the scale of the points matches the scale of the optimal curve
+    
+
 
 plt.figure(0)
 plt.xlabel("t")

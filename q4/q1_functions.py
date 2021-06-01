@@ -111,6 +111,56 @@ def objective_function(p1, p2_initial, alpha, n_clients_per_class):
     return n_clients_1 * margin1(p1) + benefice2
     # return n_clients_1*margin1(p1) + np.dot(n_clients_1_per_class, np.dot(alpha*conversion2(promotions),margin2(promotions)))
     
+    
+def learner_obj_fun_q3(p1, c1, p2_initial, alpha, n_clients_per_class):
+    '''
+    Renvoie le profit obtenu sur la journée
+
+    Parameters
+    ----------
+    p1 : int
+        prix de l'item 1 (supposé le même pour toutes les classes)
+    
+    p2_initial : int
+        prix de l'item 2 sans réduction (c'est à dire P0)
+    
+    alpha : list
+        tableau dont les cases représentent l'attribution de chaque promotion Pj pour les clients de la classe Ci
+        avec les 4 premières cases correspondant à la 1ère classe , les 4 suivantes à la seconde etc.
+
+    n_clients_per_class : list
+        liste indiquant pour chaque classe, le nombre de clients journaliers
+    '''
+    
+    
+    profit = 0
+    n_clients_1_per_class = [0] * len(c1)
+    for i,f in enumerate(c1):
+        n_clients_1_per_class[i] = c1[i] * n_clients_per_class[i] # nombre de clients ayant acheté l'item 1 par classe aujourd'hui
+
+    n_clients_1 = np.sum(n_clients_1_per_class) # nombre de clients ayant acheté l'item 1 aujourd'hui 
+
+    
+
+    profit += margin1(p1) * n_clients_1 # bénéfice du à la vente de l'item 1.
+
+    P = [0, 0.10, 0.20, 0.30] # Nos promotions, constantes. 
+
+    promotions = [(1-p) * p2_initial for p in P] # prix proposé en fonction de la réduction. attention c'est donc une liste
+    
+    f2 = conversion2(promotions) # on s'en sert donc à chaque fois pour calculer les taux de conversion
+                                 # autrement on pourrait choisit des constantes arbitraires comme pour conversion1
+    
+    benefice2 = 0
+    
+    for j,m in enumerate(margin2(promotions)): #on parcourt sur les promotions et on récupère la marge m sur la jème promo tant qu'on y est 
+        for i in range(4): #on parcourt sur les classes
+            benefice2 += alpha[4*i+j]*f2[4*i+j] * m * n_clients_per_class[i] # je crois que c'est correct, à vérifier.
+    profit = profit + benefice2   
+    return profit   
+    
+    
+    
 def learner_obj_fun(p1, c1, p2, c2, alpha, n_clients):
     '''
     Renvoie le profit obtenue sur la journée en fonction des estimations des taux de conversion c1 et c2 donnée par les lois Beta du Learner, 
