@@ -33,7 +33,10 @@ def conversion1(p1):
     On suppose un modèle linéaire.
     '''
     p_max_per_class = np.array([60, 70, 80, 100])
+
     return np.array([1 - p1/p_max if 1 - p1/p_max >= 0 else 0 for p_max in p_max_per_class])
+    #return [0.1,0.4,0.7,0.9] #si on choisit des valeurs explicites
+
 
 def conversion2(p2):
     #TODO : assez moche comme définition lol, voir comment rendre ça plus propre
@@ -47,12 +50,18 @@ def conversion2(p2):
         p2 est typiquement égal à [P0, P1, P2, P3] où les Pi sont les prix réduits
     '''
     p2_initial = p2[0]
-    #p_max_per_class = np.array([2*p2_initial, 2.5*p2_initial, 4*p2_initial, 5*p2_initial])
-    p_max_per_class = np.array([60, 70, 80, 100])
+    p_max_per_class = np.array([2*p2_initial, 2.5*p2_initial, 4*p2_initial, 5*p2_initial])
+    #p_max_per_class = np.array([60, 70, 80, 100])
 
     f2 = np.zeros((4,4))
     for j,p in enumerate(p2):
         f2[:,j] = np.array([1 - p/p_max if 1 - p/p_max >= 0 else 0 for p_max in p_max_per_class])
+    #Si on choisit des taux de conversion explicites
+    # f2[0] = [0.1,0.3,0.5,0.6]
+    # f2[1] = [0.15,0.4,0.65,0.8]
+    # f2[2] = [0.2,0.5,0.8,0.9]
+    # f2[3] = [0.25,0.6,0.8,0.95]
+
     return f2
 
 def objective_function(p1, p2_initial, alpha, n_clients_per_class):
@@ -84,6 +93,13 @@ def objective_function(p1, p2_initial, alpha, n_clients_per_class):
     promotions = (1-P) * p2_initial # prix proposé en fonction de la réduction. attention c'est donc un vecteur.
 
     return n_clients_1*margin1(p1) + np.dot(n_clients_1_per_class, np.dot(alpha*conversion2(promotions),margin2(promotions)))
+
+
+def profit_per_class(classe,p1, p2_initial,alpha, n_clients_per_class):
+    n_clients_item_1  = conversion1(p1)[classe]* n_clients_per_class[classe] #nombre de clients ayant acheté l'item1
+    P = np.array([0, 0.10, 0.20, 0.30]) # Nos promotions, constantes. 
+    promotions = (1-P) * p2_initial
+    return n_clients_item_1*margin1(p1) + np.sum(n_clients_item_1*(alpha*conversion2(promotions)[classe]))
 
 
 ###########################

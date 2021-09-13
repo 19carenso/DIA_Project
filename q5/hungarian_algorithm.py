@@ -38,8 +38,6 @@ def step3(m):
         for nc in new_marked_cols:
             new_marked_rows = np.append(new_marked_rows, np.argwhere(assignments[:,nc]==1).reshape(-1))
         
-        print(marked_rows)
-        print(new_marked_rows)
         marked_rows = np.unique(np.append(marked_rows, new_marked_rows))
         
     return np.setdiff1d(rows, marked_rows).astype(int), np.unique(marked_cols)
@@ -135,22 +133,31 @@ def hungarian_algorithm(matrix):
             step5(m, lines[0], lines[1])
         return final_assignment(matrix, m)
     
-a = np.random.randint(100, size = (100,100))
+a = np.random.randint(4, size = (4,4))
 
-#res = hungarian_algorithm(a)
+
+res = hungarian_algorithm(a)
 #print("\n Optimal Matching \n", res[1], "\n Value:", np.sum(res[0]))
 
 
 
+test = np.array([[ 6, 14, 22, 26],
+                 [ 8, 18, 28, 34],
+                 [ 4, 14, 24,  0],
+                 [0,0,0,0]
+                 ])
 
+id = hungarian_algorithm(test)
+compteur=0
+while np.sum(id[1],axis=0).all() != np.array([1, 1, 1, 1]).all(): 
+    test = test +np.random.normal(0,.1)
+    id = hungarian_algorithm(test)
+    compteur+=1
+    print('Le compteur vaut',compteur)
+ 
 
-
-
-
-
-
-
-
-
-
+bub = np.array([[ 6, 14, 22, 26],
+       [ 8, 18, 28, 34],
+       [ 4, 14, 24,  0],
+       [ 6, 17, 23,  5]])
 
