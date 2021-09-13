@@ -99,7 +99,7 @@ def profit_per_class(classe,p1, p2_initial,alpha, n_clients_per_class):
     n_clients_item_1  = conversion1(p1)[classe]* n_clients_per_class[classe] #nombre de clients ayant acheté l'item1
     P = np.array([0, 0.10, 0.20, 0.30]) # Nos promotions, constantes. 
     promotions = (1-P) * p2_initial
-    return n_clients_item_1*margin1(p1) + np.sum(n_clients_item_1*(alpha*conversion2(promotions)[classe]))
+    return n_clients_item_1*margin1(p1) + np.sum(n_clients_item_1*(alpha*conversion2(promotions)[classe])*margin2(promotions))
 
 
 ###########################
