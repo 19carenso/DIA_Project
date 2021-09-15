@@ -4,6 +4,7 @@ Created on Sun May 16 18:10:05 2021
 
 @author: Fabien
 """
+import random
 import numpy as np 
 
 class Environment():
@@ -26,14 +27,11 @@ class Environment():
                 success_1 = np.random.binomial(1, self.probabilities_1[pulled_arm, i]) # est ce que ce client a acheté l'objet 1?
                 cv_rate_1.append(success_1)
                 if success_1 == 1 :
-                    j = np.random.randint(0, 4) #comme les 4 promos sont équiprobables j'ai fait au plus simple,
-                                                # mais attention dans le sujet on a vu que le sujet agissait différement et
-                                                # et faisait tout pour être au plus proche des ratios qu'on lui a donné pour 
-                                                # l'affectation des promos, ce qui ici impliquerait de se rappeler des affectations
-                                                # précédentes et de coder un truc en fonction mais la tout de suite j'ai la flemme :). 
-                                                
-                    success_2 = np.random.binomial(1, self.probabilities_2[4*i+j]) #est ce que ce client a acheté l'objet 2? 
-                    cv_rate_2[j].append(success_2) #on apprend le taux de conversion en fonction de la promo j 
+                    #Pick a promo according to a probability distribution                        
+                    proba_promo_per_class = (self.probabilities_2[4*i], self.probabilities_2[4*i+1],self.probabilities_2[4*i+2],self.probabilities_2[4*i+3])       
+                    promo_rnd  = random.choices([0,1,2,3], weights=proba_promo_per_class, k=1)[0]
+                    success_2 = np.random.binomial(1, self.probabilities_2[4*i+promo_rnd]) #est ce que ce client a acheté l'objet 2? 
+                    cv_rate_2[promo_rnd].append(success_2) #on apprend le taux de conversion en fonction de la promo j 
         return cv_rate_1, cv_rate_2
 
     
