@@ -43,6 +43,20 @@ def conversion1(p1):
             f1[i] = 0         
     return f1
 
+
+#To generate a non stationary environment we need to modifiy the conversion rate during some periods
+#We do so by changing the maximum price classes are willing to pay for buying item 1.
+def conversion1_mod(p1):
+    p_max_per_class = [40, 50, 60, 80]
+    f1 = [0]*len(p_max_per_class)
+
+    for i,p_max in enumerate(p_max_per_class):        
+        if 1 - p1/p_max >= 0 :             
+            f1[i] = 1 - p1/p_max 
+        else:
+            f1[i] = 0         
+    return f1
+
 def conversion2(p2):
     #TODO : assez moche comme définition lol, voir comment rendre ça plus propre
     '''
@@ -111,6 +125,41 @@ def objective_function(p1, p2_initial, alpha, n_clients_per_class):
     return n_clients_1 * margin1(p1) + benefice2
     # return n_clients_1*margin1(p1) + np.dot(n_clients_1_per_class, np.dot(alpha*conversion2(promotions),margin2(promotions)))
     
+
+#Need another objective function for non stationary environment
+def objective_function_mod(p1, p2_initial, alpha, n_clients_per_class):
+    
+    f1 = conversion1_mod(p1)
+    
+    n_clients_1_per_class = [0] * len(f1)
+    
+    for i,f in enumerate(f1):
+        n_clients_1_per_class[i] = f1[i] * n_clients_per_class[i] # nombre de clients ayant acheté l'item 1 par classe aujourd'hui
+
+    n_clients_1 = np.sum(n_clients_1_per_class) # nombre de clients ayant acheté l'item 1 aujourd'hui 
+
+    P = [0, 0.10, 0.20, 0.30] # Nos promotions, constantes. 
+
+    promotions = [(1-p) * p2_initial for p in P] # prix proposé en fonction de la réduction. attention c'est donc une liste
+    
+    f2 = conversion2(promotions) # on s'en sert donc à chaque fois pour calculer les taux de conversion
+                                 # autrement on pourrait choisit des constantes arbitraires comme pour conversion1
+    
+    benefice2 = 0
+    
+    for j,m in enumerate(margin2(promotions)): #on parcourt sur les promotions et on récupère la marge m sur la jème promo tant qu'on y est 
+        for i in range(4): #on parcourt sur les classes
+            benefice2 += alpha[4*i+j]*f2[4*i+j] * m * n_clients_1_per_class[i] # je crois que c'est correct, à vérifier.
+            
+    return n_clients_1 * margin1(p1) + benefice2
+    # return n_clients_1*margin1(p1) + np.dot(n_clients_1_per_class, np.dot(alpha*conversion2(promotions),margin2(promotions)))
+    
+
+
+
+
+
+
     
 def learner_obj_fun_q3(p1, c1, p2_initial, alpha, n_clients_per_class):
     '''
