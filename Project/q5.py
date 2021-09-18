@@ -21,7 +21,7 @@ def assignment(p1, p2_initial, n_clients_per_class) :
     res = (np.zeros(16).reshape(4,4),np.zeros(16).reshape(4,4))
     
     adj_mat = np.zeros(16)   
-    n_clients_per_class_rnd = list(np.round(n_clients_per_class + np.random.normal(0,20,4))) #simulation of the number of customer per class according to a normal distribution
+    n_clients_per_class_rnd = list(np.round(n_clients_per_class + np.random.normal(0,2,4))) #simulation of the number of customer per class according to a normal distribution
     for i in range (0,4):
         #i,1
         alpha  = [1, 0, 0, 0]

@@ -29,7 +29,7 @@ p_1 = np.array([conversion1(p1) for p1 in P1]) # conversion rate of item 1 for e
 p_2 = conversion2(p2_after_promo) #attention à l'utilisation les 16taux de conversion sont tous les uns après les autres dans une même liste de 16éléments
 
 T = 365
-n_experiments = 50
+n_experiments = 100
 
 #Variables fixed of the solution
 p1_opt = p1_optimal(p1 = np.mean(P1), p2 = p2, alpha = alpha, n_clients_per_class = n_clients_per_class)
@@ -37,7 +37,7 @@ p1_opt = p1_optimal(p1 = np.mean(P1), p2 = p2, alpha = alpha, n_clients_per_clas
 
 #Paramters to randomize the number of customers per class
 n_clients_per_class_rnd = [0] * len(n_clients_per_class)
-std = 1
+std = 5
 
 for e in range(0, n_experiments):
     #storing data for plot

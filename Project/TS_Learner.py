@@ -32,5 +32,5 @@ class TS_Learner(Learner):
         #The first parameter stores how many success we have for each arm while the second parameter contains the number of loss
         self.beta_parameters[pulled_arm, 0] = self.beta_parameters[pulled_arm, 0] + np.sum(cv_rate_1)
         self.beta_parameters[pulled_arm, 1] = self.beta_parameters[pulled_arm, 1] + np.sum(1 - np.array(cv_rate_1))
-        
+
         
