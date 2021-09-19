@@ -1,4 +1,4 @@
-    # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Created on Thu May 13 21:33:08 2021
 
@@ -7,6 +7,7 @@ Created on Thu May 13 21:33:08 2021
 
 import autograd.numpy as np
 import matplotlib.pyplot as plt
+from numpy.core.function_base import linspace
 
 def margin1(p1):
     '''
@@ -24,7 +25,7 @@ def margin2(p2):
     margin2 = [0, 0, 0, 0]
     d2 = 30
     for i,x in enumerate(p2):
-        margin2[i] = p2[i] - d2
+        margin2[i] = x - d2
     return margin2
 
 def conversion1(p1):
@@ -64,7 +65,7 @@ def conversion2(p2):
         f2[4*j:4*(j+1)] = [1 - p/p_max if 1 - p/p_max >= 0 else 0 for p in p2]
     return f2
 
-def objective_function(p1, p2_initial, alpha, n_clients_per_class):
+def objective_function(p1, alpha, n_clients_per_class):
     '''
     Renvoie le profit obtenu sur la journée
 
@@ -86,7 +87,7 @@ def objective_function(p1, p2_initial, alpha, n_clients_per_class):
     
     
     f1 = conversion1(p1)
-    
+    p2_initial = 200
     n_clients_1_per_class = [0] * len(f1)
     
     for i,f in enumerate(f1):
@@ -98,119 +99,19 @@ def objective_function(p1, p2_initial, alpha, n_clients_per_class):
 
     promotions = [(1-p) * p2_initial for p in P] # prix proposé en fonction de la réduction. attention c'est donc une liste
     
-    f2 = conversion2(promotions) # on s'en sert donc à chaque fois pour calculer les taux de conversion
-                                 # autrement on pourrait choisit des constantes arbitraires comme pour conversion1
+    f2 = conversion2(promotions) #on s'en sert donc à chaque fois pour calculer les taux de conversion
+                                            # autrement on pourrait choisit des constantes arbitraires comme pour conversion1
     
     benefice2 = 0
     
-    for j,m in enumerate(margin2(promotions)): #on parcourt sur les promotions et on récupère la marge m sur la jème promo tant qu'on y est 
+    for j,m in enumerate(margin2(promotions)): #on parcourt sur les promotions et on récupère la marge m sur la ième promo tant qu'on y est 
         for i in range(4): #on parcourt sur les classes
             benefice2 += alpha[4*i+j]*f2[4*i+j] * m * n_clients_1_per_class[i] # je crois que c'est correct, à vérifier.
             
     return n_clients_1 * margin1(p1) + benefice2
     # return n_clients_1*margin1(p1) + np.dot(n_clients_1_per_class, np.dot(alpha*conversion2(promotions),margin2(promotions)))
-    
-    
-def learner_obj_fun_q3(p1, c1, p2_initial, alpha, n_clients_per_class):
-    '''
-    Renvoie le profit obtenu sur la journée
-
-    Parameters
-    ----------
-    p1 : int
-        prix de l'item 1 (supposé le même pour toutes les classes)
-    
-    p2_initial : int
-        prix de l'item 2 sans réduction (c'est à dire P0)
-    
-    alpha : list
-        tableau dont les cases représentent l'attribution de chaque promotion Pj pour les clients de la classe Ci
-        avec les 4 premières cases correspondant à la 1ère classe , les 4 suivantes à la seconde etc.
-
-    n_clients_per_class : list
-        liste indiquant pour chaque classe, le nombre de clients journaliers
-    '''
-    
-    
-    profit = 0
-    n_clients_1_per_class = [0] * len(c1)
-    for i,f in enumerate(c1):
-        n_clients_1_per_class[i] = c1[i] * n_clients_per_class[i] # nombre de clients ayant acheté l'item 1 par classe aujourd'hui
-
-    n_clients_1 = np.sum(n_clients_1_per_class) # nombre de clients ayant acheté l'item 1 aujourd'hui 
-
-    
-
-    profit += margin1(p1) * n_clients_1 # bénéfice du à la vente de l'item 1.
-
-    P = [0, 0.10, 0.20, 0.30] # Nos promotions, constantes. 
-
-    promotions = [(1-p) * p2_initial for p in P] # prix proposé en fonction de la réduction. attention c'est donc une liste
-    
-    f2 = conversion2(promotions) # on s'en sert donc à chaque fois pour calculer les taux de conversion
-                                 # autrement on pourrait choisit des constantes arbitraires comme pour conversion1
-    
-    benefice2 = 0
-    
-    for j,m in enumerate(margin2(promotions)): #on parcourt sur les promotions et on récupère la marge m sur la jème promo tant qu'on y est 
-        for i in range(4): #on parcourt sur les classes
-            benefice2 += alpha[4*i+j]*f2[4*i+j] * m * n_clients_per_class[i] # je crois que c'est correct, à vérifier.
-    profit = profit + benefice2   
-    return profit   
-    
-    
-    
-def learner_obj_fun(p1, c1, p2, c2, alpha, n_clients):
-    '''
-    Renvoie le profit obtenue sur la journée en fonction des estimations des taux de conversion c1 et c2 donnée par les lois Beta du Learner, 
-    et en fonction du n_clients sur la journée, les clients pas classe n'étant pas connu.
-    p1 est liée à c1 car c'est l'un des bras du learner, tandis que p2 lui est constant mais le learner doit toujours approximer c2. 
-    petite remarque, p2 n'est donc nécessaire que pour calculer la marge sur l'objet 2.
-    La nuance est que c1 est un flottant, tandis que c2 est une liste de 4 flottants car il y a 4 prix pour l'item 2 à approximer vu
-    qu'il y a 4 promotions... donc 4 lois beta à update youhou ! 
-    Le learner ne dissocie pas les classes donc il propose les promotions indépendamment des classes. 
-    Donc par exemple seule la première ligne d'alpha nous suffit. 
-    '''
-    profit = 0 
-    
-    n_clients_1 = c1 * n_clients #estimation par le learner du nombre de clients qui vont acheter l'item 1 aujourd'hui
-    
-    profit += margin1(p1) * n_clients_1 # bénéfice du à la vente de l'item 1.
-    
-    Promos = [0, 0.10, 0.20, 0.30] # Nos promotions, constantes, similaires à la question précédente
-    promotions = [p2 * (1 - P) for P in Promos] # içi le learner ne différencie pas les classe, donc une seule liste suffit
-    
-    for i,a in enumerate(alpha[0:4]):
-        
-        n_clients_1_i = n_clients_1 * a # nombre de clients ayant acheté l'item 1 a qui est proposé la ième promo
-        margin = margin2(promotions)
-        profit += margin[i]*c2[i]*n_clients_1_i #c2[i] étant l'estimation par le learner du taux de conversion de la promo i
-    return profit
 
 
-def experiment_obj_fun(p1, cv_rate_1, p2_after_promo, cv_rate_2):
-    profit = np.sum(cv_rate_1)*margin1(p1)
-    margin2_all = margin2(p2_after_promo)
-    for i in range(len(cv_rate_2)):
-        profit += np.sum(cv_rate_2[i])*margin2_all[i]
-    return profit
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 ###########################
 ##########       ##########
 ########   TESTS   ########
