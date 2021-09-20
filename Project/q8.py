@@ -26,7 +26,7 @@ p_1_mod = np.array([conversion1_mod(p1) for p1 in P1])
 T = 364
 n_experiments = 50
 
-#Paramters to randomize the number of customers per class
+#Parameters to randomize the number of customers per class
 n_clients_per_class_rnd = [0] * len(n_clients_per_class)
 std = 1
 
@@ -70,9 +70,9 @@ for e in range(0, n_experiments):
       ts1_memory_pulled_arm.append(pulled_arm_ts1)        
       cv_rate_1, cv_rate_2 = ts1_env.round(pulled_arm_ts1, n_clients_per_class_rnd)
       if((current_phase==0) or (current_phase==2)):
-         profit1_ts = objective_function(P1[pulled_arm_ts1], p2, alpha, n_clients_per_class) #On est d'accord que le nombre de clients n'est pas connu du Learner donc il utilise la moyenne ?
+         profit1_ts = objective_function(P1[pulled_arm_ts1], p2, alpha, n_clients_per_class)
       else : 
-         profit1_ts = objective_function_mod(P1[pulled_arm_ts1], p2, alpha, n_clients_per_class) #On est d'accord que le nombre de clients n'est pas connu du Learner donc il utilise la moyenne ?
+         profit1_ts = objective_function_mod(P1[pulled_arm_ts1], p2, alpha, n_clients_per_class)
       ts1_learner.update(pulled_arm_ts1, cv_rate_1, cv_rate_2, profit1_ts)
 
       #CDTS Learner
@@ -87,7 +87,6 @@ for e in range(0, n_experiments):
       
       if CD.update(profit_ts):
          print("reset at time : ", ts_learner.t)
-         #en fait le code n'est techniquement pas correct comme ça car il faudrait théoriquement vérifier le CD sur chaque bras ! Mais bon c'est pas si grave lol
          ts_learner.reset(n_arms)
          CD.reset()
 

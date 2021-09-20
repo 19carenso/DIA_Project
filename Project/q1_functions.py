@@ -140,10 +140,6 @@ def objective_function_mod(p1, p2_initial, alpha, n_clients_per_class):
     
 
 
-
-
-
-
     
 def objective_function_cv_rate1_unknown(p1, c1, p2_initial, alpha, n_clients_per_class):
     '''
@@ -220,67 +216,11 @@ def profit_per_class(classe,p1, p2_initial,alpha, n_clients_per_class):
 ##########       ##########
 ###########################
 
-n_clients_per_class = np.zeros(4) #nombre de clients qui viennent dans la journée par classe, initialisé à zéro. Devra être une variable aléatoire par la suite.
-means_per_class = np.array([50, 20, 10, 5])
-std_per_class = np.array([10, 10, 1, 3])
-
-for i in range(4):
-    x = np.random.normal(means_per_class[i], std_per_class[i])
-    if x > 0 : n_clients_per_class[i] = np.round(x)
-
 
 def test1():
     '''
-    Trace les fonctions du modèle décrites plus haut
+    Plot the profit with respect to price p_1
     '''
-
-    #Example
-    pmax = 100
-    P1 = range(0,pmax)
-    Promotions = [50,45,40,35]
-
-    plt.figure(0)
-    plt.axes(xlim = (0,pmax), ylim = (0,pmax))
-    plt.grid()
-    plt.title('Margin on item 1 and 2 depending on the price p')
-    plt.xlabel("p")
-    plt.ylabel("margin")
-    plt.plot(P1, [margin1(p) for p in P1], 'r')
-    plt.plot(P1, [margin2(p) for p in P1], 'b')
-    plt.legend(["m1", "m2"])
-
-    plt.figure(1)
-    plt.axes(xlim = (0,pmax), ylim = (0,1))
-    plt.grid()
-    plt.title('Proportions of clients of each class buying item 1 at price p')
-    plt.xlabel("p")
-    plt.ylabel("conversion1")
-    plt.plot(P1, [conversion1(p)[0] for p in P1], 'b')
-    plt.plot(P1, [conversion1(p)[1] for p in P1], 'g')
-    plt.plot(P1, [conversion1(p)[2] for p in P1], 'r')
-    plt.plot(P1, [conversion1(p)[3] for p in P1], 'c')
-    plt.legend(["Class 1", "Class 2", "Class 3", "Class 4"])
-
-    plt.figure(2)
-    plt.axes(xlim = (0,pmax), ylim = (0,1))
-    plt.grid()
-    plt.title('Proportions of clients of each class buying item 2 at price p')
-    plt.xlabel("p")
-    plt.ylabel("conversion2")
-    plt.plot(Promotions, conversion2(Promotions)[0], 'bo')
-    plt.plot(Promotions, conversion2(Promotions)[1], 'go')
-    plt.plot(Promotions, conversion2(Promotions)[2], 'ro')
-    plt.plot(Promotions, conversion2(Promotions)[3], 'co')
-    plt.legend(["Class 1", "Class 2", "Class 3", "Class 4"])
-
-    plt.show()
-
-
-def test2():
-    '''
-    Trace la fonction objective (le profit journalier)
-    '''
-    #TODO : vérifier la fonction objectif, le graphe me parait un peu trop irrégulier...
 
     pmax = 450
     P1 = range(100,pmax)
@@ -295,20 +235,4 @@ def test2():
     plt.plot(P1, [objective_function(p, p2_initial, alpha, n_clients_per_class) for p in P1], 'r')
     plt.legend(["profit"])
     plt.show()
-#test2()
-
-def test3():
-    '''
-    Teste une seule valeur de la fonction objectif
-    '''
-
-    p1 = 50
-    p2_initial = 50
-    alpha = [[0.25, 0.25, 0.25, 0.25],
-             [0.25, 0.25, 0.25, 0.25],
-             [0.25, 0.25, 0.25, 0.25],
-             [0.25, 0.25, 0.25, 0.25]]
-    n_clients_per_class = [50, 20, 10, 5] #codé en dur pour avoir des expériences répliquables
-    res = objective_function(p1, p2_initial, alpha, n_clients_per_class)
-
-    print(res)
+#test1()

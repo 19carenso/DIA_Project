@@ -24,11 +24,11 @@ p_2 = conversion2(p2_after_promo)
 T = 364
 n_experiments = 10
 
-#Paramters to randomize the number of customers per class
+#Parameters to randomize the number of customers per class
 n_clients_per_class_rnd = [0] * len(n_clients_per_class)
 std = 1
 
-window_size = 30
+window_size = 20
 n_phases = 4
 phases_len = int(T/n_phases)
 
@@ -67,9 +67,9 @@ for e in range(0, n_experiments):
       
       cv_rate_1, cv_rate_2 = ts_env.round(pulled_arm_ts, n_clients_per_class_rnd)
       if((current_phase==0) or (current_phase==2)):
-         profit_ts = objective_function(P1[pulled_arm_ts], p2, alpha, n_clients_per_class) #On est d'accord que le nombre de clients n'est pas connu du Learner donc il utilise la moyenne ?
+         profit_ts = objective_function(P1[pulled_arm_ts], p2, alpha, n_clients_per_class)
       else : 
-         profit_ts = objective_function_mod(P1[pulled_arm_ts], p2, alpha, n_clients_per_class) #On est d'accord que le nombre de clients n'est pas connu du Learner donc il utilise la moyenne ?
+         profit_ts = objective_function_mod(P1[pulled_arm_ts], p2, alpha, n_clients_per_class)
       ts_learner.update(pulled_arm_ts, cv_rate_1, cv_rate_2, profit_ts)
       
       cv_rate_1, cv_rate_2 = swts_env.round(pulled_arm_swts, n_clients_per_class_rnd)

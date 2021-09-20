@@ -23,7 +23,7 @@ p1_opt = p1_optimal(p1 = np.mean(P1), p2 = p2, alpha = alpha, n_clients_per_clas
 T = 365
 n_experiments = 10
 
-#Paramters to randomize the number of customers per class
+#Parameters to randomize the number of customers per class
 n_clients_per_class_rnd = [0] * len(n_clients_per_class)
 std = 1
 
@@ -48,7 +48,7 @@ for e in range(0, n_experiments):
         pulled_arm = ts_learner.pull_arm()
         ts_memory_pulled_arm.append(pulled_arm)
         cv_rate_1, cv_rate_2 = env.round(pulled_arm, n_clients_per_class_rnd)
-        profit = objective_function(P1[pulled_arm], p2, alpha, n_clients_per_class) #On est d'accord que le nombre de clients n'est pas connu du Learner donc il utilise la moyenne ?
+        profit = objective_function(P1[pulled_arm], p2, alpha, n_clients_per_class)
         ts_learner.update(pulled_arm, cv_rate_1, cv_rate_2, profit)
 
         #Matching

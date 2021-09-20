@@ -17,11 +17,11 @@ n_clients_per_class = [50, 20, 10, 5]
 
 n_arms = len(P1)
 p_1 = np.array([conversion1(p1) for p1 in P1]) # conversion rate of item 1 for each arm and for each class
-p_2 = conversion2(p2_after_promo) #attention à l'utilisation les 16taux de conversion sont tous les uns après les autres dans une même liste de 16éléments
+p_2 = conversion2(p2_after_promo)
 p1_opt = p1_optimal(p1 = np.mean(P1), p2 = p2, alpha = alpha, n_clients_per_class = n_clients_per_class)
 
 T = 365
-n_experiments = 10
+n_experiments = 100
 
 #storing data for plot
 ts_rewards_per_experiment = []
