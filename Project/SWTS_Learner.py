@@ -1,13 +1,8 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Mar 22 18:27:31 2021
-
-@author: Fabien
-"""
+import numpy as np 
 
 from TS_Learner2 import TS_Learner
-import numpy as np 
- 
+
 class SWTS_Learner(TS_Learner):
    def __init__(self,n_arms, P1, p2, alpha, n_clients_per_class, window_size):
         super().__init__( n_arms, P1, p2, alpha, n_clients_per_class)

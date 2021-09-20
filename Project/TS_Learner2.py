@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sun May 16 18:16:13 2021
-
-@author: Fabien
-"""
-
 from Learner2 import Learner
 from q1_functions import objective_function_cv_rates_unknown
 import numpy as np

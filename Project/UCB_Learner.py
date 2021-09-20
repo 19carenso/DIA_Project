@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Apr 26 15:48:16 2021
-
-@author: maxime
-"""
+import numpy as np 
 
 from Learner import Learner
-import numpy as np 
 
 class UCB_Learner(Learner):
 
     def __init__(self, n_arms, p1, p2, alpha, n_clients_per_class):
+        super().__init__(n_arms, p1, p2, alpha, n_clients_per_class)  
         '''
         Il est important d'initialiser les valeurs des moyennes avec une 
         valeure supérieure au profit optimum et non avec un vecteur de 0
@@ -18,7 +14,6 @@ class UCB_Learner(Learner):
         et non 0 ou 1, l'upperbound du bras choisi est largement réhaussée à chaque update
         ce qui ammène à tirer toujours le même bras.
         '''        
-        super().__init__(n_arms, p1, p2, alpha, n_clients_per_class)    
         self.empirical_means = np.array([3000]*n_arms)
         self.confidence = np.array([np.inf]*n_arms)
         

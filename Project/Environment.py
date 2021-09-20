@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sun May 16 18:10:05 2021
-
-@author: Fabien
-"""
 import numpy as np 
 
 class Environment():

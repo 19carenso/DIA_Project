@@ -9,8 +9,6 @@ def step2(m):
     for j in range(m.shape[1]):
         m[:,j] = m[:,j] - np.min(m[:,j])
 
-
-
 def step3(m):
     dim = m.shape[0]
     zeros = {}
@@ -63,7 +61,6 @@ def step3(m):
                 break
 
     return rows, columns
-
 
 def step5(m, covered_rows, covered_cols): 
     dim0 = m.shape[0]

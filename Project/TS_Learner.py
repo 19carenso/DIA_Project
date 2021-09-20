@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sun May 16 18:16:13 2021
-
-@author: Fabien
-"""
+import numpy as np
 
 from Learner import Learner
 from q1_functions import objective_function_cv_rate1_unknown

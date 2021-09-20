@@ -1,14 +1,8 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Mar 22 18:21:07 2021
-
-@author: maxime
-"""
-
-from Environment2 import Environment
-
 import random
 import numpy as np 
+
+from Environment2 import Environment
 
 class Non_Stationnary_Environment(Environment):
     def __init__(self, n_arms,  probabilities_1, probabilities_2, horizon):

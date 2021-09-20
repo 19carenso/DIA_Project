@@ -1,16 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat May 15 09:06:20 2021
-
-@author: maxime
-"""
-
 import autograd.numpy as np
 import scipy.optimize as so
 from autograd import grad
 from q1_functions import objective_function,objective_function_mod
     
-
 def obj_fun(p1, p2_initial, alpha, n_clients_per_class): 
     '''
     Input :
