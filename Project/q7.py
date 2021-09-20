@@ -17,21 +17,19 @@ from q1_functions import objective_function,objective_function_mod, conversion1,
 from q1_optimiser import p1_optimal, p1_optimal_mod
 from q5 import assignment
 
-#Cacher un message d'erreur
-np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
 
 #Variables fixed of the problem
 alpha = [0.25]*16
-p2 = 50 # price before promotion
+p2 = 160
 p2_after_promo = [p2 * (1 - P) for P in [0, 0.10, 0.20, 0.30]] 
-n_clients_per_class =  [150, 80, 100, 50]
+n_clients_per_class =  [50, 20, 10, 5]
 
 
 #Variables fixed of the testing
-P1 = [35, 40, 43, 45, 50] #j'ai changé les bras, c'est moins ambigu pour voir quel est le meilleur
+P1 = [100, 110, 120, 130, 140, 150]
 n_arms = len(P1)
-p_1 = np.array([conversion1(p1) for p1 in P1]) # conversion rate of item 1 for each arm and for each class
-p_2 = conversion2(p2_after_promo) #attention à l'utilisation les 16taux de conversion sont tous les uns après les autres dans une même liste de 16éléments
+p_1 = np.array([conversion1(p1) for p1 in P1]) 
+p_2 = conversion2(p2_after_promo)
 p_1_mod = np.array([conversion1_mod(p1) for p1 in P1])
 
 T = 365
@@ -43,7 +41,6 @@ n_experiments = 10
 n_clients_per_class_rnd = [0] * len(n_clients_per_class)
 std = 1
 
-#On peut faire varier cette fenêtre et interpréter les résultats
 window_size = 20
 n_phases = 4
 phases_len = int(T/n_phases)
@@ -70,6 +67,8 @@ for e in range(0, n_experiments):
         
         #The number of customer per class is a random variable
         n_clients_per_class_rnd = list(np.round(n_clients_per_class + np.random.normal(0,std,4)).astype(int)) #simulation of the number of customer per class according to a normal distribution
+        #The gaussian is truncated. If the number of customers in one class is negative then we set it to 0.
+        n_clients_per_class_rnd = [0 if n_clients<0 else n_clients for n_clients in n_clients_per_class_rnd]
 
         #TS Learner
         pulled_arm_ts = ts_learner.pull_arm()
@@ -93,12 +92,11 @@ for e in range(0, n_experiments):
         else : 
            profit_swts = objective_function_mod(P1[pulled_arm_swts], p2, alpha, n_clients_per_class)    
         swts_learner.update(pulled_arm_swts, cv_rate_1, cv_rate_2, profit_swts)
-        #print(profit_ts,profit_swts)
 
         #Matching
         #We use the hungarian algorithm to find the optimal assignment using as p1 the arm pulled by the learner
         alpha = assignment(P1[pulled_arm_swts],p2,n_clients_per_class_rnd)[0]
-        alpha = alpha.flatten() #la fonction assignement renvoie un array (4,4) or le Learner a besoin d'une liste
+        alpha = alpha.flatten() 
 
        
         
@@ -110,7 +108,6 @@ ts_instantaneous_regret = np.zeros(T)
 optimum_per_round = np.zeros(T)
 
 #Variables fixed of the solution
-alpha
 p1_opt = p1_optimal(p1 = np.mean(P1), p2 = p2, alpha = alpha, n_clients_per_class = n_clients_per_class)
 p1_opt_mod = p1_optimal_mod(p1 = np.mean(P1), p2 = p2, alpha = alpha, n_clients_per_class = n_clients_per_class)
 
@@ -126,7 +123,6 @@ for i in range(n_phases):
     swts_instantaneous_regret[t_index] = opt_per_phases[i] - np.mean(swts_rewards_per_experiment,axis = 0)[t_index]
     ts_instantaneous_regret[t_index] = opt_per_phases[i] - np.mean(ts_rewards_per_experiment,axis = 0)[t_index]
 
-    
 plt.figure(0)
 plt.plot(np.cumsum(swts_instantaneous_regret),'r')
 plt.plot(np.cumsum(ts_instantaneous_regret),'b')

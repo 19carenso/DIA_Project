@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon May 17 18:57:12 2021
-
-@author: maxime
-"""
 
 """
 Created on Sun May 16 18:08:13 2021
@@ -25,11 +20,11 @@ from q1_optimiser import p1_optimal
 #Variables fixed
 
 alpha = [0.25]*16 # promotions are distributed uniformly with no distinction of class
-p2 = 40 # price before promotion
-p2_after_promo = [p2 * (1 - P) for P in [0, 0.10, 0.20, 0.30]] #price after promotions, be careful that the promos are the same than in obj_fun. 
-P1 = [20, 30, 35, 40, 45, 50] #arms
+p2 = 160 # price before promotion
+p2_after_promo = [p2 * (1 - P) for P in [0, 0.10, 0.20, 0.30]] #price after promotions
+P1 = [100, 110, 120, 130, 140, 150] #arms
 
-n_clients_per_class = [50,40,25,15]
+n_clients_per_class =  [50, 20, 10, 5]
 n_arms = len(P1)
 p_1 = np.array([conversion1(p1) for p1 in P1])
 
@@ -37,7 +32,7 @@ p1_opt = p1_optimal(p1 = np.mean(P1), p2 = p2, alpha = alpha, n_clients_per_clas
 p_2 = conversion2(p2_after_promo)
 T = 365
 
-n_experiments = 50
+n_experiments = 10
 
 ts_rewards_per_experiment = []
 ts_pulled_arms_global = np.array([0]*len(P1))
@@ -70,7 +65,8 @@ for e in range(0, n_experiments):
         ucb_learner.update(pulled_arm, cv_rate_1, profit)
         
         
-        
+    #Print the 2 most pulled arms for each learner
+    
     ts_n_pulled_arms = [((np.array(ts_memory_pulled_arm) == i).sum()) for i in range(len(P1))]
     ts_pulled_arms_global += np.array(ts_n_pulled_arms)
     print(f" for the experiment number {e} the number of time each arm has been pulled are \n {ts_n_pulled_arms} \n")
@@ -89,44 +85,55 @@ for e in range(0, n_experiments):
     print(f"so the 2 most pulled arms are {P1[ucb_most_pulled_arm]} and {P1[ucb_second_most_pulled_arm]} \n \n -------------------------- \n")
 
 
-
+    #Store the profit per experiment
     ts_rewards_per_experiment.append(ts_learner.total_profit)
     ucb_rewards_per_experiment.append(ucb_learner.total_profit)
 
+#Compute the optimum profit per day
 opt = objective_function(p1_opt, p2, alpha, n_clients_per_class)
+
+#Scale the number of pulled arms to better visualize on plot
 ts_pulled_arms_global = opt* ts_pulled_arms_global / max(ts_pulled_arms_global)  #we use the optimal value just as a scaling factor so that the scale of the points matches the scale of the optimal curve
 ucb_pulled_arms_global = opt* ucb_pulled_arms_global / max(ucb_pulled_arms_global)
 
 
-'''
-        l'UCB a tendence à "butiner" les bras. Cela se transcrit sur les graphs
-        par un regret plus élevé que TS mais une bien meilleure approximation
-        des bras sous_optimaux.
-'''    
 
-
+#Regret
 plt.figure(0)
 plt.xlabel("t")
 plt.ylabel("Regret")
 plt.plot(np.cumsum(np.mean(opt - ts_rewards_per_experiment, axis = 0)), 'b')
-plt.plot(np.cumsum(np.mean(opt - ucb_rewards_per_experiment, axis = 0)), 'r')
+plt.plot(np.cumsum(np.mean(opt - ucb_rewards_per_experiment, axis = 0)), 'orange')
 plt.legend(["TS","UCB"])
 
+#Pulled arms
 plt.figure(1)
-X = np.linspace(10, 60, 100)
+X = np.linspace(80, 200, 100)
 Y = [objective_function(x, p2, alpha, n_clients_per_class) for x in X]
-plt.xlabel('prize of item 1')
+plt.xlabel('price of item 1')
 plt.ylabel('profit over the day')
 plt.scatter(P1, ts_pulled_arms_global)
-plt.legend(["TS"])
-plt.plot(X, Y, 'g')
-
-plt.figure(2)
-X = np.linspace(10, 60, 100)
-Y = [objective_function(x, p2, alpha, n_clients_per_class) for x in X]
-plt.xlabel('prize of item 1')
-plt.ylabel('profit over the day')
 plt.scatter(P1, ucb_pulled_arms_global)
-plt.legend(["UCB"])
+plt.legend(["TS","UCB"])
 plt.plot(X, Y, 'g')
+plt.show()
+
+#Reward
+plt.figure(2)
+t = np.linspace(0,365,365)
+plt.plot(t,np.cumsum(np.mean(ts_rewards_per_experiment,axis=0)),'b')
+plt.plot(t,np.cumsum(np.mean(ucb_rewards_per_experiment,axis=0)),'orange')
+plt.legend(["TS","UCB"])
+plt.xlabel('Day')
+plt.ylabel('Profit')
+plt.show()
+
+#Reward per day
+plt.figure(2)
+t = np.linspace(0,365,365)
+plt.plot(t,np.mean(ts_rewards_per_experiment,axis=0),'b')
+plt.plot(t,np.mean(ucb_rewards_per_experiment,axis=0),'orange')
+plt.legend(["TS","UCB"])
+plt.xlabel('Day')
+plt.ylabel('Profit per day')
 plt.show()

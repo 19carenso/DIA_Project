@@ -8,13 +8,10 @@ import numpy as np
 from Hungarian_Algorithm import hungarian_algorithm
 from q1_functions import profit_per_class
 
-
-#Attention jusqu'à maintenant on a choisi les valeurs des paramètres un peu au pif ce qui donne un profit par classe très variable selon les classes
-#Il semblerait que l'algo hongrois fonctionne mieux quand les classes engendrent un profit similaire
 adj_mat = np.zeros(16)
 n_clients_per_class = [50,40,25,15]
-p1 = 45
-p2_initial = 40
+p1 = 116
+p2_initial = 160
 
   
 def assignment(p1, p2_initial, n_clients_per_class) :

@@ -6,7 +6,7 @@ Created on Sun May 16 18:16:13 2021
 """
 
 from Learner import Learner
-from q1_functions import learner_obj_fun_q3
+from q1_functions import objective_function_cv_rate1_unknown
 import numpy as np
 
 class TS_Learner(Learner):
@@ -22,7 +22,7 @@ class TS_Learner(Learner):
         sample = np.random.beta(self.beta_parameters[:,0], self.beta_parameters[:,1])
         value = [0]*self.n_arms
         for i in range(self.n_arms):   
-            value[i] = learner_obj_fun_q3(self.p1[i], sample[i], self.p2, self.alpha, self.n_clients_per_class)      
+            value[i] = objective_function_cv_rate1_unknown(self.p1[i], sample[i], self.p2, self.alpha, self.n_clients_per_class)      
         idx = np.argmax(value)
         return idx
         
