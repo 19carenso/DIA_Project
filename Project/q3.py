@@ -22,7 +22,7 @@ from q1_optimiser import p1_optimal
 alpha = [0.25]*16 # promotions are distributed uniformly with no distinction of class
 p2 = 160 # price before promotion
 p2_after_promo = [p2 * (1 - P) for P in [0, 0.10, 0.20, 0.30]] #price after promotions
-P1 = [100, 110, 120, 130, 140, 150] #arms
+P1 = [120, 140,160,180,200] #arms
 
 n_clients_per_class =  [50, 20, 10, 5]
 n_arms = len(P1)

@@ -27,7 +27,8 @@ n_clients_per_class =  [50, 20, 10, 5]
 
 
 #Variables fixed of the testing
-P1 = [100, 110, 120, 130, 140, 150]
+P1 = [120, 140,160,180,200]
+
 n_arms = len(P1)
 p_1 = np.array([conversion1(p1) for p1 in P1]) 
 p_2 = conversion2(p2_after_promo) 
@@ -130,4 +131,5 @@ for i in range(n_phases):
 plt.figure(0)
 plt.plot(np.cumsum(swts_instantaneous_regret),'r')
 plt.plot(np.cumsum(ts_instantaneous_regret),'b')
+plt.legend(['SWTS','CD-TS'])
 plt.show()

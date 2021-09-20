@@ -19,7 +19,7 @@ class UCB_Learner(Learner):
         ce qui ammène à tirer toujours le même bras.
         '''        
         super().__init__(n_arms, p1, p2, alpha, n_clients_per_class)    
-        self.empirical_means = np.array([1400]*n_arms)
+        self.empirical_means = np.array([3000]*n_arms)
         self.confidence = np.array([np.inf]*n_arms)
         
     def pull_arm(self): 
